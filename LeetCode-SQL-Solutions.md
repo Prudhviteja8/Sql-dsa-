@@ -126,6 +126,57 @@ WHERE conditions LIKE 'DIAB1%' OR conditions LIKE '% DIAB1%';
 
 ---
 
+## 620. Not Boring Movies
+
+**Table:** `Cinema` (id, movie, description, rating)
+
+**Task:** Find movies with odd id AND description is not "boring". Sort by rating descending.
+
+**Solution:**
+```sql
+SELECT id, movie, description, rating
+FROM Cinema
+WHERE id % 2 = 1 AND description != 'boring'
+ORDER BY rating DESC;
+```
+
+**Key Takeaway:**
+- `id % 2 = 1` → odd numbers, `id % 2 = 0` → even numbers
+- `IS NOT` is for NULLs, use `!=` for value comparison
+- SQL uses single quotes `'text'` for strings
+
+---
+
+## 1141. User Activity for the Past 30 Days I
+
+**Table:** `Activity` (user_id, session_id, activity_date, activity_type)
+
+**Task:** Find daily active user count for 30-day period ending 2019-07-27.
+
+**Solution:**
+```sql
+SELECT activity_date AS day, COUNT(DISTINCT user_id) AS active_users
+FROM Activity
+WHERE activity_date BETWEEN '2019-06-28' AND '2019-07-27'
+GROUP BY activity_date;
+```
+
+**Alternative using DATEDIFF:**
+```sql
+SELECT activity_date AS day, COUNT(DISTINCT user_id) AS active_users
+FROM Activity
+WHERE DATEDIFF('2019-07-27', activity_date) < 30
+  AND activity_date <= '2019-07-27'
+GROUP BY activity_date;
+```
+
+**Key Takeaway:**
+- `COUNT(DISTINCT col)` — not `DISTINCT(col)`
+- Dates must be in single quotes: `'2019-07-27'`
+- `BETWEEN` is inclusive on both ends
+
+---
+
 # SQL Notes
 
 ## WHERE vs HAVING
@@ -165,3 +216,35 @@ WHERE conditions LIKE 'DIAB1%' OR conditions LIKE '% DIAB1%';
 | `'%abc'` | Ends with abc |
 | `'%abc%'` | Contains abc anywhere |
 | `'_abc'` | Any single char + abc |
+
+## DATEDIFF()
+
+`DATEDIFF(date1, date2)` returns the difference in days (date1 - date2).
+
+| Expression | Result |
+|---|---|
+| `DATEDIFF('2019-07-27', '2019-07-27')` | 0 |
+| `DATEDIFF('2019-07-27', '2019-07-20')` | 7 |
+| `DATEDIFF('2019-07-27', '2019-06-27')` | 30 |
+
+**Real-World Use Cases:**
+- **E-Commerce:** Find orders in last 7 days → `WHERE DATEDIFF(CURDATE(), order_date) <= 7`
+- **Apps:** Find inactive users → `WHERE DATEDIFF(CURDATE(), last_login) > 30`
+- **Hospital:** Overdue follow-ups → `WHERE DATEDIFF(CURDATE(), surgery_date) > 14`
+- **HR:** Employee tenure → `DATEDIFF(CURDATE(), joining_date) / 365 AS years`
+
+**Note:** For time differences (hours, minutes), use `TIMESTAMPDIFF(MINUTE, start, end)` instead.
+
+**Syntax varies by database:**
+| Database | Syntax |
+|---|---|
+| MySQL | `DATEDIFF(date1, date2)` → returns days |
+| SQL Server | `DATEDIFF(unit, date1, date2)` |
+| PostgreSQL | `date1 - date2` → subtract directly |
+
+## Odd/Even Check
+
+| Expression | Result | Meaning |
+|---|---|---|
+| `5 % 2` | 1 | Odd |
+| `4 % 2` | 0 | Even |
