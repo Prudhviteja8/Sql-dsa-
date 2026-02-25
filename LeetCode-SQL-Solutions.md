@@ -177,6 +177,48 @@ GROUP BY activity_date;
 
 ---
 
+## 1693. Daily Leads and Partners
+
+**Table:** `DailySales` (date_id, make_name, lead_id, partner_id)
+
+**Task:** For each date_id and make_name, find the number of distinct lead_ids and distinct partner_ids.
+
+**Solution:**
+```sql
+SELECT date_id, make_name,
+       COUNT(DISTINCT lead_id) AS unique_leads,
+       COUNT(DISTINCT partner_id) AS unique_partners
+FROM DailySales
+GROUP BY date_id, make_name;
+```
+
+**Key Takeaway:**
+- `DISTINCT(col)` is NOT a function — use `COUNT(DISTINCT col)`
+- Group by multiple columns when needed
+
+---
+
+## 1729. Find Followers Count
+
+**Table:** `Followers` (user_id, follower_id)
+
+**Task:** For each user, find the number of followers. Sort by user_id ascending.
+
+**Solution:**
+```sql
+SELECT user_id, COUNT(follower_id) AS followers_count
+FROM Followers
+GROUP BY user_id
+ORDER BY user_id ASC;
+```
+
+**Key Takeaway:**
+- `GROUP BY user_id` → "for each user"
+- `COUNT(follower_id)` → counts followers per user
+- No `DISTINCT` needed since `(user_id, follower_id)` is already a primary key
+
+---
+
 # SQL Notes
 
 ## WHERE vs HAVING
