@@ -219,6 +219,47 @@ ORDER BY user_id ASC;
 
 ---
 
+## 182. Duplicate Emails
+
+**Table:** `Person` (id, email)
+
+**Task:** Find all duplicate emails (appear more than once).
+
+**Solution:**
+```sql
+SELECT email
+FROM Person
+GROUP BY email
+HAVING COUNT(email) > 1;
+```
+
+**Key Takeaway:**
+- Use `HAVING` (not `WHERE`) to filter with aggregate functions
+- If you see `COUNT()`, `SUM()`, `AVG()` in a filter → always `HAVING`
+
+---
+
+## 1050. Actors and Directors Who Cooperated At Least Three Times
+
+**Table:** `ActorDirector` (actor_id, director_id, timestamp)
+
+**Task:** Find (actor_id, director_id) pairs that cooperated at least 3 times.
+
+**Solution:**
+```sql
+SELECT actor_id, director_id
+FROM ActorDirector
+GROUP BY actor_id, director_id
+HAVING COUNT(*) >= 3;
+```
+
+**Key Takeaway:**
+- Use commas to separate columns in SELECT, not `AND`
+- `COUNT(*)` counts all rows — takes only one argument
+- `>= 3` means "at least 3", `> 3` means "more than 3"
+
+---
+
 # SQL Notes
 
 ## WHERE vs HAVING
