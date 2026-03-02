@@ -260,7 +260,56 @@ HAVING COUNT(*) >= 3;
 
 ---
 
+## 1378. Replace Employee ID With The Unique Identifier
+
+**Tables:** `Employees` (id, name), `EmployeeUNI` (id, unique_id)
+
+**Task:** Show unique_id and name for each employee. If no unique_id, show NULL.
+
+**Solution:**
+```sql
+SELECT e2.unique_id, e1.name
+FROM Employees e1
+LEFT JOIN EmployeeUNI e2 ON e1.id = e2.id;
+```
+
+**Key Takeaway:**
+- `LEFT JOIN` keeps all rows from the left table even if no match (fills NULL)
+- `JOIN` (INNER) only returns rows that match in both tables
+- "If no match, show NULL" → always use `LEFT JOIN`
+
+---
+
+## 1068. Product Sales Analysis I
+
+**Tables:** `Sales` (sale_id, product_id, year, quantity, price), `Product` (product_id, product_name)
+
+**Task:** Find product_name, year, and price for each sale.
+
+**Solution:**
+```sql
+SELECT p.product_name, s.year, s.price
+FROM Sales s
+JOIN Product p ON s.product_id = p.product_id;
+```
+
+**Key Takeaway:**
+- `FROM` and `JOIN` take **table names**, not column names
+- Always use `ON` keyword after JOIN to specify the condition
+- JOIN syntax: `FROM TableA a JOIN TableB b ON a.col = b.col`
+
+---
+
 # SQL Notes
+
+## Types of JOINs
+
+| JOIN Type | What it does |
+|---|---|
+| `JOIN` (INNER) | Only rows that match in **both** tables |
+| `LEFT JOIN` | **All** rows from left table + matches from right (NULL if no match) |
+| `RIGHT JOIN` | All rows from right table + matches from left |
+| `FULL OUTER JOIN` | All rows from both tables (NULL where no match) |
 
 ## WHERE vs HAVING
 
