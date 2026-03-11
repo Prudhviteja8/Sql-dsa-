@@ -300,7 +300,121 @@ JOIN Product p ON s.product_id = p.product_id;
 
 ---
 
+## 1965. Employees With Missing Information
+
+**Tables:** `Employees` (employee_id, name), `Salaries` (employee_id, salary)
+
+**Task:** Find IDs of employees with missing name OR missing salary.
+
+**Solution:**
+```sql
+SELECT employee_id FROM Employees
+WHERE employee_id NOT IN (SELECT employee_id FROM Salaries)
+UNION
+SELECT employee_id FROM Salaries
+WHERE employee_id NOT IN (SELECT employee_id FROM Employees)
+ORDER BY employee_id ASC;
+```
+
+**Key Takeaway:**
+- `NOT IN (subquery)` finds rows that don't exist in other table
+- `UNION` combines results from two queries
+
+---
+
+## 1795. Rearrange Products Table
+
+**Table:** `Products` (product_id, store1, store2, store3)
+
+**Task:** Turn columns into rows (unpivot). Exclude NULL prices.
+
+**Solution:**
+```sql
+SELECT product_id, 'store1' AS store, store1 AS price FROM Products WHERE store1 IS NOT NULL
+UNION ALL
+SELECT product_id, 'store2' AS store, store2 AS price FROM Products WHERE store2 IS NOT NULL
+UNION ALL
+SELECT product_id, 'store3' AS store, store3 AS price FROM Products WHERE store3 IS NOT NULL;
+```
+
+**Key Takeaway:**
+- `UNION ALL` combines multiple SELECTs into one result
+- Use separate SELECT for each column to unpivot
+
+---
+
 # SQL Notes
+
+## SQL Basics
+
+### Query Template
+```
+SELECT columns      ← what do you want?
+FROM table          ← which table?
+WHERE condition     ← filter rows
+GROUP BY column     ← make piles
+HAVING condition    ← filter groups
+ORDER BY column     ← sort results
+LIMIT n             ← how many rows?
+```
+
+### SELECT Examples
+- `SELECT *` → all columns
+- `SELECT name, marks` → specific columns
+- `SELECT name AS student_name` → rename column (alias can't have spaces, use underscores)
+
+### WHERE Conditions
+- `WHERE marks > 80` → greater than
+- `WHERE city = 'Hyderabad'` → equals (single quotes for strings!)
+- `WHERE marks BETWEEN 75 AND 90` → range (inclusive)
+- `WHERE city IN ('Chennai', 'Mumbai')` → multiple values
+- `WHERE city = 'Hyderabad' AND marks > 80` → both conditions
+- `WHERE city = 'Chennai' OR city = 'Mumbai'` → either condition (must repeat column name)
+
+### ORDER BY
+- `ORDER BY marks ASC` → low to high (default)
+- `ORDER BY marks DESC` → high to low
+- Always put **column name** before ASC/DESC
+
+### LIMIT
+- `ORDER BY marks DESC LIMIT 3` → top 3
+- `ORDER BY marks ASC LIMIT 3` → bottom 3
+
+## GROUP BY — How to Decide
+
+Find "per ____" or "each ____" in the question → that's your GROUP BY.
+
+| Question says | GROUP BY |
+|---|---|
+| Total per **customer** | `customer_id` |
+| Count per **city** | `city` |
+| Average per **department** | `department` |
+| Total per **channel** per **month** | `channel, month` |
+
+## Aggregate Functions
+
+| Function | Meaning |
+|----------|---------|
+| `COUNT(*)` | How many rows |
+| `SUM(col)` | Add up values |
+| `AVG(col)` | Average |
+| `MAX(col)` | Highest |
+| `MIN(col)` | Lowest |
+| `COUNT(DISTINCT col)` | Count unique values |
+
+## WHERE vs HAVING
+
+**Simple rule:** See COUNT, SUM, AVG, MIN, MAX in the condition? → HAVING. Otherwise → WHERE.
+
+| Condition | Use |
+|---|---|
+| `city = 'Hyderabad'` | WHERE |
+| `marks > 80` | WHERE |
+| `COUNT(*) > 5` | HAVING |
+| `SUM(amount) > 10000` | HAVING |
+| `AVG(marks) > 80` | HAVING |
+
+**Analogy:** WHERE = choosing who enters the restaurant. HAVING = after they sit in groups, deciding which groups get served.
 
 ## Types of JOINs
 
@@ -380,3 +494,42 @@ JOIN Product p ON s.product_id = p.product_id;
 |---|---|---|
 | `5 % 2` | 1 | Odd |
 | `4 % 2` | 0 | Even |
+
+## JOIN Syntax Template
+
+```sql
+SELECT columns
+FROM TableA a
+JOIN TableB b ON a.common_col = b.common_col;
+```
+
+- `FROM` and `JOIN` take **table names**, not column names
+- Always use `ON` keyword after JOIN
+- Use aliases (a, b) to keep queries short
+
+## NOT IN / UNION
+
+**NOT IN:**
+```sql
+WHERE col NOT IN (SELECT col FROM other_table)   -- subquery
+WHERE col NOT IN (1, 2, 3)                        -- list
+```
+
+**UNION vs UNION ALL:**
+| | UNION | UNION ALL |
+|---|---|---|
+| Duplicates | Removes | Keeps |
+| Speed | Slower | Faster |
+
+## Common Mistakes to Avoid
+
+| Mistake | Correct |
+|---|---|
+| `"text"` | `'text'` (single quotes) |
+| `ORDER BY DESC` | `ORDER BY column DESC` |
+| `WHERE COUNT(*) > 5` | `HAVING COUNT(*) > 5` |
+| `DISTINCT(col)` | `COUNT(DISTINCT col)` |
+| `FROM table.column` | `FROM table` (table names only) |
+| `groupby` | `GROUP BY` (two words) |
+| `AS total marks` | `AS total_marks` (no spaces in alias) |
+| Missing `FROM` | Always include `FROM table_name` |
