@@ -2,6 +2,26 @@
 
 ---
 
+## 1757. Recyclable and Low Fat Products
+
+**Table:** `Products` (product_id, low_fats, recyclable)
+
+**Task:** Find product ids that are both low fat AND recyclable.
+
+**Solution:**
+```sql
+SELECT product_id
+FROM Products
+WHERE low_fats = 'Y' AND recyclable = 'Y';
+```
+
+**Key Takeaway:**
+- "both" conditions → use `AND`
+- Single quotes for string values `'Y'`
+- Only SELECT what the question asks for
+
+---
+
 ## 1148. Article Views I
 
 **Table:** `Views` (article_id, author_id, viewer_id, view_date)
